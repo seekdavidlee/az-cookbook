@@ -1,2 +1,2 @@
 # az-cookbook
-My cookbook for managing resources in azure
+Welcome to my cookbook for managing resources in azure.

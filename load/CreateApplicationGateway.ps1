@@ -25,7 +25,12 @@ if (!(Get-AzVirtualNetworkSubnetConfig -VirtualNetwork $vnet -Name $ApplicationG
     Write-Warning "Subnet $ApplicationGatewaySubnetName already exist."    
 }
 
-$subnet = Get-AzVirtualNetworkSubnetConfig -VirtualNetwork $virtualNetwork -Name $ApplicationGatewaySubnetName 
+$subnet = Get-AzVirtualNetworkSubnetConfig -VirtualNetwork $virtualNetwork -Name $ApplicationGatewaySubnetName
+
+if (!$subnet) {
+    Write-Warning "Still creating subnet... Please try again later!"
+    return
+}
 
 $PublicIPName = "${StackName}-pip"
 Write-Host "Creating Public IP $PublicIPName"

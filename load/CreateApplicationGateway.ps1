@@ -14,8 +14,16 @@ $count = (Get-AzVirtualNetworkSubnetConfig -VirtualNetwork $virtualNetwork).Coun
 
 # We need to associate this new subnet to the application gateway we are creating later.
 $ApplicationGatewaySubnetName = "${StackName}-frontend"
-Add-AzVirtualNetworkSubnetConfig -Name $ApplicationGatewaySubnetName -VirtualNetwork $virtualNetwork -AddressPrefix "10.0.$count.0/24"
+
+# Don't create the subnet if it already exist.
+if (!(Get-AzVirtualNetworkSubnetConfig -VirtualNetwork $vnet -Name $ApplicationGatewaySubnetName -ErrorAction SilentlyContinue)) {
+    Add-AzVirtualNetworkSubnetConfig -Name $ApplicationGatewaySubnetName -VirtualNetwork $virtualNetwork -AddressPrefix "10.0.$count.0/24"
     $virtualNetwork | Set-AzVirtualNetwork
+    Write-Warning "Added Subnet $ApplicationGatewaySubnetName to Virtual network."
+
+} else {
+    Write-Warning "Subnet $ApplicationGatewaySubnetName already exist."    
+}
 
 $subnet = Get-AzVirtualNetworkSubnetConfig -VirtualNetwork $virtualNetwork -Name $ApplicationGatewaySubnetName 
 

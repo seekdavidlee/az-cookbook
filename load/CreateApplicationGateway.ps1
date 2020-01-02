@@ -14,7 +14,7 @@ $count = (Get-AzVirtualNetworkSubnetConfig -VirtualNetwork $virtualNetwork).Coun
 
 # We need to associate this new subnet to the application gateway we are creating later.
 $ApplicationGatewaySubnetName = "${StackName}-frontend"
-Add-AzVirtualNetworkSubnetConfig -Name $ApplicationGatewaySubnetName -VirtualNetwork $virtualNetwork -AddressPrefix "10.0.{$count}.0/24"
+Add-AzVirtualNetworkSubnetConfig -Name $ApplicationGatewaySubnetName -VirtualNetwork $virtualNetwork -AddressPrefix "10.0.$count.0/24"
     $virtualNetwork | Set-AzVirtualNetwork
 
 $PublicIPName = "${StackName}-pip"

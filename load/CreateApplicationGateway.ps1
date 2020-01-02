@@ -91,4 +91,5 @@ New-AzApplicationGateway `
   -FrontendPorts $ApplicationGatewayFrontendPort `
   -HttpListeners $ApplicationGatewayListener `
   -RequestRoutingRules $ApplicationGatewayFrontendRule `
+  -Tag $Tags `
   -Sku $sku

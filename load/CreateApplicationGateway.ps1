@@ -17,6 +17,8 @@ $ApplicationGatewaySubnetName = "${StackName}-frontend"
 Add-AzVirtualNetworkSubnetConfig -Name $ApplicationGatewaySubnetName -VirtualNetwork $virtualNetwork -AddressPrefix "10.0.$count.0/24"
     $virtualNetwork | Set-AzVirtualNetwork
 
+$subnet = Get-AzVirtualNetworkSubnetConfig -VirtualNetwork $virtualNetwork -Name $ApplicationGatewaySubnetName 
+
 $PublicIPName = "${StackName}-pip"
 Write-Host "Creating Public IP $PublicIPName"
 $PublicIP = New-AzPublicIpAddress -ResourceGroupName $ResourceGroupName -Location $LocationName -Name $PublicIPName `
@@ -26,7 +28,7 @@ $ApplicationGatewayIPConfigName = "${StackName}-ipconfig"
 Write-Host "Creating IP Config $ApplicationGatewayIPConfigName"
 $ApplicationGatewayIPConfig = New-AzApplicationGatewayIPConfiguration `
     -Name $ApplicationGatewayIPConfigName `
-    -Subnet $ApplicationGatewaySubnetName
+    -Subnet $subnet
 
 $ApplicationGatewayFrontendIPConfigName = "${StackName}-frontendipconfig"
 $ApplicationGatewayFrontendIPConfig = New-AzApplicationGatewayFrontendIPConfig `

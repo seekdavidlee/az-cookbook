@@ -5,13 +5,12 @@ $ErrorActionPreference = "Stop"
 $Tags = @{"stack-name"="${StackName}"}
 $LocationName = (Get-AzResourceGroup -Name $ResourceGroupName).Location
 
-Write-Host "Creating subnet for application gateway..."
+$virtualNetwork = Get-AzVirtualNetwork -Name $VNetName
 
 # This is just my covention, my subnets are always /24, so I can just add one more. However, if a subnet in between 
 # gets removed, then this logic will not work.
-$count = (Get-AzVirtualNetworkSubnetConfig -VirtualNetwork $VNetName).Count + 1
-
-$virtualNetwork = Get-AzVirtualNetwork -Name $VNetName
+Write-Host "Creating subnet for application gateway..."
+$count = (Get-AzVirtualNetworkSubnetConfig -VirtualNetwork $virtualNetwork).Count + 1
 
 # We need to associate this new subnet to the application gateway we are creating later.
 $ApplicationGatewaySubnetName = "${StackName}-frontend"

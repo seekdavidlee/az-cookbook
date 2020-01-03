@@ -18,9 +18,6 @@ $ipConfig.ApplicationGatewayBackendAddressPools = @()
 $ipConfig.LoadBalancerInboundNatRules = @()
 $ipConfig.ApplicationSecurityGroups = @()
 
-$any = Get-AzApplicationGatewayBackendAddressPool -ApplicationGateway $ApplicationGateway `
-    -Name $ApplicationGatewayBackendPoolName
-
 if ($ApplicationGateway.BackendAddressPools.BackendIpConfigurations -is [array]) {
     Write-Host "Adding new ip config to existing array"
     $ApplicationGateway.BackendAddressPools.BackendIpConfigurations += $ipConfig

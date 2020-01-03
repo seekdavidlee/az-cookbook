@@ -1,14 +1,15 @@
-param($ResourceGroupName, $StackName, $ApplicationGatewayName)
+param($ResourceGroupName, $StackName, $ApplicationGatewayStackName)
 
 $ErrorActionPreference = "Stop"
 
+$ApplicationGatewayName = "${ApplicationGatewayStackName}-agw"
 $ApplicationGateway = Get-AzApplicationGateway `
     -Name $ApplicationGatewayName `
     -ResourceGroupName $ResourceGroupName 
 
 $nic = Get-AzNetworkInterface -ResourceGroupName $ResourceGroupName -Name "${StackName}-nic"
 
-$ApplicationGatewayBackendPoolName = "${StackName}-backendpool" 
+$ApplicationGatewayBackendPoolName = "${ApplicationGatewayStackName}-backendpool"
 Set-AzureRmApplicationGatewayBackendAddressPool -ApplicationGateway $ApplicationGateway `
     -Name $ApplicationGatewayBackendPoolName `
     -BackendIPAddresses $nic.IpConfigurations.PrivateIpAddress

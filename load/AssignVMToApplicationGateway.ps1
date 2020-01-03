@@ -1,4 +1,4 @@
-param($VNetName, $ResourceGroupName, $StackName, $ApplicationGatewayName)
+param($ResourceGroupName, $StackName, $ApplicationGatewayName)
 
 $ErrorActionPreference = "Stop"
 

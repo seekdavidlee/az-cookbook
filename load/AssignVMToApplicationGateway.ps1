@@ -12,4 +12,4 @@ $nic = Get-AzNetworkInterface -ResourceGroupName $ResourceGroupName -Name "${Sta
 $ApplicationGatewayBackendPoolName = "${ApplicationGatewayStackName}-backendpool"
 Add-AzApplicationGatewayBackendAddressPool -ApplicationGateway $ApplicationGateway `
     -Name $ApplicationGatewayBackendPoolName `
-    -BackendIPConfigurationIds $nic.IpConfigurations.Id
+    -BackendIPAddresses $nic.IpConfigurations.PrivateIpAddress

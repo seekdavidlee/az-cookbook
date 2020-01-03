@@ -10,6 +10,6 @@ $ApplicationGateway = Get-AzApplicationGateway `
 $nic = Get-AzNetworkInterface -ResourceGroupName $ResourceGroupName -Name "${StackName}-nic"
 
 $ApplicationGatewayBackendPoolName = "${ApplicationGatewayStackName}-backendpool"
-Add-AzureRmApplicationGatewayBackendAddressPool -ApplicationGateway $ApplicationGateway `
+Add-AzApplicationGatewayBackendAddressPool -ApplicationGateway $ApplicationGateway `
     -Name $ApplicationGatewayBackendPoolName `
     -BackendIPConfigurationIds $nic.IpConfigurations.Id

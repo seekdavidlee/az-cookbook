@@ -21,13 +21,13 @@ $ipConfig.ApplicationSecurityGroups = @()
 $any = Get-AzApplicationGatewayBackendAddressPool -ApplicationGateway $ApplicationGateway `
     -Name $ApplicationGatewayBackendPoolName
 
-if ($agw.BackendAddressPools.BackendIpConfigurations -is [array]) {
+if ($ApplicationGateway.BackendAddressPools.BackendIpConfigurations -is [array]) {
     Write-Host "Adding new ip config to existing array"
-    $agw.BackendAddressPools.BackendIpConfigurations += $ipConfig
+    $ApplicationGateway.BackendAddressPools.BackendIpConfigurations += $ipConfig
 } else {
     Write-Host "Converting property to array and adding new ip config to array property"
-    $agw.BackendAddressPools.BackendIpConfigurations = @($agw.BackendAddressPools.BackendIpConfigurations, $ipConfig)
+    $ApplicationGateway.BackendAddressPools.BackendIpConfigurations = @($ApplicationGateway.BackendAddressPools.BackendIpConfigurations, $ipConfig)
 }
 
 "Updating application gateway"
-Set-AzApplicationGateway -ApplicationGateway $agw
+Set-AzApplicationGateway -ApplicationGateway $ApplicationGateway

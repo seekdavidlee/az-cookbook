@@ -1,4 +1,8 @@
-param($ResourceGroupName, $StackName, $VMSize, $WindowsSkuName, $KeyVaultName, $StorageAccountName, $StackPrefix, [switch] $Web, [switch] $DotNetCore, [switch]$IsPrivate)
+param($ResourceGroupName, $StackName, $VMSize, $WindowsSkuName, $KeyVaultName, $StorageAccountName, $StackPrefix, 
+    [switch] $Web, 
+    [switch] $DotNetCore, 
+    [switch] $Git, 
+    [switch] $IsPrivate)
 
 $ErrorActionPreference = "Stop"
 
@@ -139,12 +143,16 @@ if ($Web -or $DotNetCore) {
     $args = ""
 
     if ($Web) {
-        $args += "-Web "
+        $args += " -Web"
     }
 
     if ($DotNetCore) {
-        $args += "-DotNetCore"
+        $args += " -DotNetCore"
     }
+
+    if ($Git) {
+        $args += " -Git"
+    }    
 
     Set-AzVMCustomScriptExtension -ResourceGroupName $ResourceGroupName `
         -Name "ConfigureServer" `

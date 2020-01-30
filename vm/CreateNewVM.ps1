@@ -1,7 +1,15 @@
-param($ResourceGroupName, $StackName, $VMSize, $WindowsSkuName, $KeyVaultName, $StorageAccountName, $StackPrefix, 
+param($ResourceGroupName, 
+    $StackName, 
+    $VMSize, 
+    $WindowsSkuName, 
+    $KeyVaultName, 
+    $StorageAccountName, 
+    $StackPrefix, 
+    $Region,
     [switch] $Web, 
     [switch] $DotNetCore, 
     [switch] $Git, 
+    [switch] $Backend,
     [switch] $IsPrivate)
 
 $ErrorActionPreference = "Stop"
@@ -37,25 +45,30 @@ if ($KeyVaultName) {
 
 $VMLocalAdminUser = "LocalAdminUser"
 $VMLocalAdminSecurePassword = ConvertTo-SecureString $password -AsPlainText -Force
-$LocationName = (Get-AzResourceGroup -Name $ResourceGroupName).Location
 
 $VMName = $ComputerName
 $Tags = @{"stack-name"="${StackName}-${prefix}"}
-$VnetName = "${StackName}-vnet"
-$SubnetName = "${StackName}-frontend"
+$VnetName = "$Region-$StackName-vnet"
+
+if ($Backend) {
+    $SubnetName = "$Region-$StackName-backend"
+}else {
+    $SubnetName = "$Region-$StackName-frontend"
+}
+
 $subnet = (Get-AzVirtualNetwork -Name $VnetName).Subnets | ? { $_.Name -eq $SubnetName }
 
 if (!$IsPrivate) {
     $PublicIPName = "${VMName}-pip"
     Write-Host "Creating Public IP $PublicIPName"
     
-    $PublicIP = New-AzPublicIpAddress -ResourceGroupName $ResourceGroupName -Location $LocationName -Name $PublicIPName `
+    $PublicIP = New-AzPublicIpAddress -ResourceGroupName $ResourceGroupName -Location $Region -Name $PublicIPName `
         -AllocationMethod Dynamic -IdleTimeoutInMinutes 4 -Tag $Tags -DomainNameLabel $VMName
 } else {
     Write-Host "Did not allocate public ip because this is a private vm"
 }
 
-$NSG = New-AzNetworkSecurityGroup -ResourceGroupName $ResourceGroupName -Location $LocationName -Name "${VMName}-nsg" -Tag $Tags
+$NSG = New-AzNetworkSecurityGroup -ResourceGroupName $ResourceGroupName -Location $Region -Name "${VMName}-nsg" -Tag $Tags
 
 $IPConfigName = "${VMName}-ipconfig"
 
@@ -78,13 +91,13 @@ $NICName = "${ComputerName}-nic"
 Write-Host "Creating NIC $NICName for VM"
 
 if (!$IsPrivate) {
-    $NIC = New-AzNetworkInterface -Name $NICName -ResourceGroupName $ResourceGroupName -Location $LocationName `
+    $NIC = New-AzNetworkInterface -Name $NICName -ResourceGroupName $ResourceGroupName -Location $Region `
         -SubnetId $subnet.Id `
         -Tag $Tags `
         -PublicIpAddressId $PublicIP.Id `
         -NetworkSecurityGroupId $NSG.Id
 } else {
-    $NIC = New-AzNetworkInterface -Name $NICName -ResourceGroupName $ResourceGroupName -Location $LocationName `
+    $NIC = New-AzNetworkInterface -Name $NICName -ResourceGroupName $ResourceGroupName -Location $Region `
         -SubnetId $subnet.Id `
         -Tag $Tags `
         -NetworkSecurityGroupId $NSG.Id
@@ -101,7 +114,7 @@ $VirtualMachine = Set-AzVMSourceImage -VM $VirtualMachine -PublisherName 'Micros
 $VirtualMachine | Set-AzVMBootDiagnostic -Enable -ResourceGroupName $ResourceGroupName -StorageAccountName $StorageAccountName
 
 Write-Host "Creating VM $VMName..."
-New-AzVM -ResourceGroupName $ResourceGroupName -Location $LocationName -VM $VirtualMachine -Verbose
+New-AzVM -ResourceGroupName $ResourceGroupName -Location $Region -VM $VirtualMachine -Verbose
 
 Write-Host "Setting up auto-shutdown schedule for VM"
 $shutdown_time = "2000"
@@ -119,7 +132,7 @@ $properties = @{
     "targetResourceId" = (Get-AzureRmVM -ResourceGroupName $ResourceGroupName -Name $VMName).Id
 }
 
-New-AzureRmResource -ResourceId ("/subscriptions/{0}/resourceGroups/{1}/providers/microsoft.devtestlab/schedules/shutdown-computevm-{2}" -f (Get-AzureRmContext).Subscription.Id, $ResourceGroupName, $VMName) -Location $LocationName -Properties $properties -Force
+New-AzureRmResource -ResourceId ("/subscriptions/{0}/resourceGroups/{1}/providers/microsoft.devtestlab/schedules/shutdown-computevm-{2}" -f (Get-AzureRmContext).Subscription.Id, $ResourceGroupName, $VMName) -Location $Region -Properties $properties -Force
 
 if ($KeyVaultName) {
 
@@ -157,7 +170,7 @@ if ($Web -or $DotNetCore) {
     Set-AzVMCustomScriptExtension -ResourceGroupName $ResourceGroupName `
         -Name "ConfigureServer" `
         -VMName $VMName `
-        -Location $LocationName `
+        -Location $Region `
         -StorageAccountKey $storageAccountKey `
         -ContainerName "deploy" `
         -StorageAccountName $StorageAccountName `

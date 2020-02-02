@@ -7,7 +7,13 @@ $ErrorActionPreference = "Stop"
 
 foreach ($ScriptPath in $ScriptPaths) {
 	
-	$RunbookName = $ScriptPath.Split('/', $ScriptPath.Length - 1)
+	$paths =  $ScriptPath.Split('\')
+
+	if ($paths.Length -lt 2) {
+		$paths =  $ScriptPath.Split('/')
+	}
+
+	$RunbookName = $paths[$paths.Length - 1]
 
 	Write-Host "Processing $RunbookName"
 

@@ -19,7 +19,7 @@ foreach ($ScriptPath in $ScriptPaths) {
 
 		# Further remove the file ext
 		$paths = $RunbookName.Split('.')
-		$RunbookName = $paths[$paths.Length - 1]
+		$RunbookName = $paths[0]
 	}
 
 	Write-Host "Processing $RunbookName"

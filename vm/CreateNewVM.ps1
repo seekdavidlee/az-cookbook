@@ -6,6 +6,7 @@ param($ResourceGroupName,
     $StorageAccountName, 
     $StackPrefix, 
     $Region,
+    $ConnectionName,
     [switch] $Web, 
     [switch] $DotNetCore, 
     [switch] $Git, 
@@ -14,7 +15,7 @@ param($ResourceGroupName,
 
 $ErrorActionPreference = "Stop"
 
-$Conn = Get-AutomationConnection -Name az300runbook
+$Conn = Get-AutomationConnection -Name $ConnectionName
 
 Connect-AzAccount -ServicePrincipal -Tenant $Conn.TenantId `
     -ApplicationId $Conn.ApplicationId -CertificateThumbprint $Conn.CertificateThumbprint
@@ -42,8 +43,6 @@ if ($results.Count -eq 1) {
 
 Add-Type -AssemblyName "System.Web"
 $password = [System.Web.Security.Membership]::GeneratePassword(24, 0)
-
-#$password = (openssl rand -base64 32)
 
 if ($KeyVaultName) {
     Write-Host "Password will be stored in Azure Key Vault"    

@@ -5,9 +5,7 @@ param(
 
 $ErrorActionPreference = "Stop"
 
-$ScriptPaths | ForEach-Object {
-	
-	$ScriptPath = $_
+foreach ($ScriptPath in $ScriptPaths) {
 	
 	$RunbookName = $ScriptPath.Split('/', $ScriptPath.Length - 1)
 

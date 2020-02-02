@@ -20,7 +20,8 @@ foreach ($ScriptPath in $ScriptPaths) {
 	Import-AzureRMAutomationRunbook -Name $RunbookName `
 		-Path $ScriptPath `
 		-ResourceGroupName $ResourceGroupName -AutomationAccountName $AutomationAccountName `
-		-Type PowerShell
+		-Type PowerShell `
+		-Force
 
 	Write-Host "$RunbookName is synced"
 }

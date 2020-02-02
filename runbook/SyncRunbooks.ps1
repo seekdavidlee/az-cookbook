@@ -1,7 +1,8 @@
 param(
 	[Parameter(Mandatory=$true)][String[]] $ScriptPaths, 
 	[Parameter(Mandatory=$true)]$AutomationAccountName, 
-	[Parameter(Mandatory=$true)]$ResourceGroupName)
+	[Parameter(Mandatory=$true)]$ResourceGroupName,
+	[switch]$Publish)
 
 $ErrorActionPreference = "Stop"
 
@@ -17,6 +18,20 @@ foreach ($ScriptPath in $ScriptPaths) {
 
 	Write-Host "Processing $RunbookName"
 
+	if ($Publish) {
+		Import-AzureRMAutomationRunbook -Name $RunbookName `
+		-Path $ScriptPath `
+		-ResourceGroupName $ResourceGroupName -AutomationAccountName $AutomationAccountName `
+		-Type PowerShell `
+		-Force `
+		-Published
+	} else {
+		Import-AzureRMAutomationRunbook -Name $RunbookName `
+		-Path $ScriptPath `
+		-ResourceGroupName $ResourceGroupName -AutomationAccountName $AutomationAccountName `
+		-Type PowerShell `
+		-Force		
+	}
 	Import-AzureRMAutomationRunbook -Name $RunbookName `
 		-Path $ScriptPath `
 		-ResourceGroupName $ResourceGroupName -AutomationAccountName $AutomationAccountName `

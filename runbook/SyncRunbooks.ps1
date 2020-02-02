@@ -3,11 +3,13 @@ param(
 	[Parameter(Mandatory=$true)]$AutomationAccountName, 
 	[Parameter(Mandatory=$true)]$ResourceGroupName)
 
+$ErrorActionPreference = "Stop"
+
 $ScriptPaths | ForEach-Object {
 	
 	$ScriptPath = $_
 	
-	$RunbookName = [System.IO.Path]::GetFileName($ScriptPath)
+	$RunbookName = $ScriptPath.Split('/', $ScriptPath.Length - 1)
 
 	Write-Host "Processing $RunbookName"
 

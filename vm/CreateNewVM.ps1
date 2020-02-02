@@ -6,6 +6,7 @@ param($ResourceGroupName,
     $StorageAccountName, 
     $StackPrefix, 
     $Region,
+    $ConnectionName,
     [switch] $Web, 
     [switch] $DotNetCore, 
     [switch] $Git, 
@@ -13,6 +14,11 @@ param($ResourceGroupName,
     [switch] $IsPrivate)
 
 $ErrorActionPreference = "Stop"
+
+$Conn = Get-AutomationConnection -Name $ConnectionName
+
+Connect-AzAccount -ServicePrincipal -Tenant $Conn.TenantId `
+    -ApplicationId $Conn.ApplicationId -CertificateThumbprint $Conn.CertificateThumbprint
 
 if ($StackPrefix) {
     Write-Host "Using Prefix $StackPrefix"
@@ -35,7 +41,8 @@ if ($results.Count -eq 1) {
     return
 }
 
-$password = (openssl rand -base64 32)
+Add-Type -AssemblyName "System.Web"
+$password = [System.Web.Security.Membership]::GeneratePassword(24, 0)
 
 if ($KeyVaultName) {
     Write-Host "Password will be stored in Azure Key Vault"    
@@ -129,10 +136,10 @@ $properties = @{
         "status" = "Disabled";
         "timeInMinutes" = 30
     }
-    "targetResourceId" = (Get-AzureRmVM -ResourceGroupName $ResourceGroupName -Name $VMName).Id
+    "targetResourceId" = (Get-AzVM -ResourceGroupName $ResourceGroupName -Name $VMName).Id
 }
 
-New-AzureRmResource -ResourceId ("/subscriptions/{0}/resourceGroups/{1}/providers/microsoft.devtestlab/schedules/shutdown-computevm-{2}" -f (Get-AzureRmContext).Subscription.Id, $ResourceGroupName, $VMName) -Location $Region -Properties $properties -Force
+New-AzResource -ResourceId ("/subscriptions/{0}/resourceGroups/{1}/providers/microsoft.devtestlab/schedules/shutdown-computevm-{2}" -f (Get-AzContext).Subscription.Id, $ResourceGroupName, $VMName) -Location $Region -Properties $properties -Force
 
 if ($KeyVaultName) {
 

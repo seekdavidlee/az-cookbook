@@ -15,6 +15,12 @@ foreach ($ScriptPath in $ScriptPaths) {
 	}
 
 	$RunbookName = $paths[$paths.Length - 1]
+	if ($RunbookName.Contains(".")) {
+
+		# Further remove the file ext
+		$paths = $RunbookName.Split('.')
+		$RunbookName = $paths[$paths.Length - 1]
+	}
 
 	Write-Host "Processing $RunbookName"
 

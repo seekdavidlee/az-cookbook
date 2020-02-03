@@ -24,7 +24,10 @@ for($i = 0; $i -lt 5; $i++) {
     if ($Error.Count -gt $lastErrorCount -and $Error[$Error.Count - 1].ToString().Contains("HTTP Status Code: 403")) {
         $lastErrorCount = $Error.Count
         Write-Host "Retry $i"
-        Start-Sleep -Seconds 3
+        # Increment wait by additional seconds
+        $wait = $i + 3
+        Write-Host "Waiting $wait seconds"
+        Start-Sleep -Seconds $wait
     } else {
         Write-Host "Done!"
         break

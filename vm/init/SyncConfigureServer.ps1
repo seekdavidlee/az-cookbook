@@ -24,6 +24,7 @@ for($i = 0; $i -lt 5; $i++) {
         Write-Host "Retry $i"
         Start-Sleep -Seconds 3
     } else {
+        $Error
         Write-Host "Done!"
         break
     }

@@ -23,7 +23,8 @@ for($i = 0; $i -lt 5; $i++) {
     }
     catch {
         $ex = $_
-        if ($ex.ErrorMessage.Contains("not authorized")) {
+        $ex.Exception
+        if ($ex.Exception.Contains("not authorized")) {
             Write-Host "Try $i"
             Start-Sleep -Seconds 3
         } else {

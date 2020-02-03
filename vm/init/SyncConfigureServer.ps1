@@ -10,4 +10,5 @@ $ctx = New-AzStorageContext -StorageAccountName $StorageAccountName -StorageAcco
 
 Set-AzStorageBlobContent -Container "deploy" `
     -File "$RootDirectory/vm/init/ConfigureServer.ps1" -Blob "ConfigureServer.ps1" `
-    -Context $ctx
+    -Context $ctx `
+    -Force

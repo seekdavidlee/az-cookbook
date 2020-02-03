@@ -20,6 +20,8 @@ for($i = 0; $i -lt 5; $i++) {
         -Context $ctx `
         -Force
 
+        Write-Host "Error? $Error"
+        Write-Host $Error
         Write-Host "Done!"
         break
     }

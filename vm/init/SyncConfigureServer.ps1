@@ -14,26 +14,18 @@ $ip = (Invoke-RestMethod -Uri 'https://api.ipify.org?format=json').ip
 Add-AzStorageAccountNetworkRule -ResourceGroupName $ResourceGroupName -AccountName $StorageAccountName -IPAddressOrRange $ip
 
 for($i = 0; $i -lt 5; $i++) {
-    try {
-        Set-AzStorageBlobContent -Container "deploy" `
-        -File "$RootDirectory/vm/init/ConfigureServer.ps1" -Blob "ConfigureServer.ps1" `
-        -Context $ctx `
-        -Force
 
-        Write-Host "Error? $Error"
-        Write-Host $Error
+    Set-AzStorageBlobContent -Container "deploy" `
+    -File "$RootDirectory/vm/init/ConfigureServer.ps1" -Blob "ConfigureServer.ps1" `
+    -Context $ctx `
+    -Force
+    
+    if ($Error -and $Error.Contains("not authorized")) {
+        Write-Host "Retry $i"
+        Start-Sleep -Seconds 3
+    } else {
         Write-Host "Done!"
         break
-    }
-    catch {
-        $ex = $_
-        $ex.Exception
-        if ($ex.Exception.Contains("not authorized")) {
-            Write-Host "Try $i"
-            Start-Sleep -Seconds 3
-        } else {
-            throw
-        }
     }
 }
 

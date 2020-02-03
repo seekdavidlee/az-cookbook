@@ -1,4 +1,5 @@
 param(
+    $RootDirectory,
     $ResourceGroupName, 
     $StorageAccountName)
 
@@ -8,5 +9,5 @@ $storageAccountKey = (Get-AzStorageAccountKey -ResourceGroupName $ResourceGroupN
 $ctx = New-AzStorageContext -StorageAccountName $StorageAccountName -StorageAccountKey $storageAccountKey
 
 Set-AzureStorageBlobContent -Container "deploy" `
-    -File ".\ConfigureServer.ps1" -Blob "ConfigureServer.ps1" `
+    -File "$RootDirectory\ConfigureServer.ps1" -Blob "ConfigureServer.ps1" `
     -Context $ctx

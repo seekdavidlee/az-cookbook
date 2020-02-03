@@ -8,7 +8,15 @@ $storageAccountKey = (Get-AzStorageAccountKey -ResourceGroupName $ResourceGroupN
 
 $ctx = New-AzStorageContext -StorageAccountName $StorageAccountName -StorageAccountKey $storageAccountKey
 
+# Temporary add Cloud Shell ip to allow list.
+$ip = (Invoke-RestMethod -Uri 'https://api.ipify.org?format=json').ip
+
+Add-AzStorageAccountNetworkRule -ResourceGroupName $ResourceGroupName -AccountName $StorageAccountName -IPAddressOrRange $ip
+
 Set-AzStorageBlobContent -Container "deploy" `
     -File "$RootDirectory/vm/init/ConfigureServer.ps1" -Blob "ConfigureServer.ps1" `
     -Context $ctx `
     -Force
+
+# Remove Cloud Shell ip from allow list since we are done.
+Remove-AzStorageAccountNetworkRule -ResourceGroupName $ResourceGroupName -AccountName $StorageAccountName -IPAddressOrRange $ip

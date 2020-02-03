@@ -8,6 +8,6 @@ $storageAccountKey = (Get-AzStorageAccountKey -ResourceGroupName $ResourceGroupN
 
 $ctx = New-AzStorageContext -StorageAccountName $StorageAccountName -StorageAccountKey $storageAccountKey
 
-Set-AzureStorageBlobContent -Container "deploy" `
+Set-AzStorageBlobContent -Container "deploy" `
     -File "$RootDirectory/vm/init/ConfigureServer.ps1" -Blob "ConfigureServer.ps1" `
     -Context $ctx

@@ -21,7 +21,7 @@ for($i = 0; $i -lt 5; $i++) {
     -Context $ctx `
     -Force
     
-    if ($Error.Count gt $lastErrorCount -and $Error[$Error.Count - 1].ToString().Contains("HTTP Status Code: 403")) {
+    if ($Error.Count -gt $lastErrorCount -and $Error[$Error.Count - 1].ToString().Contains("HTTP Status Code: 403")) {
         $lastErrorCount = $Error.Count
         Write-Host "Retry $i"
         Start-Sleep -Seconds 3

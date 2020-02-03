@@ -19,6 +19,8 @@ for($i = 0; $i -lt 5; $i++) {
         -File "$RootDirectory/vm/init/ConfigureServer.ps1" -Blob "ConfigureServer.ps1" `
         -Context $ctx `
         -Force
+
+        Write-Host "Done!"
         break
     }
     catch {

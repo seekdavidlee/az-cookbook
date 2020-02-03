@@ -31,15 +31,20 @@ if ($Web) {
 
 if ($DotNetCore) {
 
-    LogMessage -Message "Installing dotnet" -LogFileName $logFileName
+    LogMessage -Message "Installing dotnet core" -LogFileName $logFileName
     if (!(Test-Path "C:\tools")) {
         New-Item -Path C:\tools -ItemType Directory
     }
-    Invoke-WebRequest -Uri https://dot.net/v1/dotnet-install.ps1 -UseBasicParsing -OutFile C:\tools\dotnet-install.ps1
+    
+    Invoke-WebRequest -Uri https://download.visualstudio.microsoft.com/download/pr/854ca330-4414-4141-9be8-5da3c4be8d04/3792eafd60099b3050313f2edfd31805/dotnet-sdk-3.1.101-win-x64.exe -UseBasicParsing -OutFile C:\tools\dotnet-sdk-3.1.101-win-x64.exe
     Push-Location C:\tools
-    .\dotnet-install.ps1 -Channel LTS
+
+    .\dotnet-sdk-3.1.101-win-x64.exe /install /norestart /quiet /log "C:\tools\dotnet-sdk-3.1.101-win-x64.log"
     Pop-Location
-    LogMessage -Message "Done installing dotnet" -LogFileName $logFileName
+    LogMessage -Message "Done installing dotnet core" -LogFileName $logFileName
+
+    # Display dotnet version
+    LogMessage -Message (dotnet --version) -LogFileName $logFileName
 }
 
 if ($Git) {

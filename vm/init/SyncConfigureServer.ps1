@@ -13,6 +13,8 @@ $ip = (curl -s checkip.dyndns.org | sed -e 's/.*Current IP Address: //' -e 's/<.
 
 Add-AzStorageAccountNetworkRule -ResourceGroupName $ResourceGroupName -AccountName $StorageAccountName -IPAddressOrRange $ip
 
+Start-Sleep -Seconds 15
+
 Set-AzStorageBlobContent -Container "deploy" `
     -File "$RootDirectory/vm/init/ConfigureServer.ps1" -Blob "ConfigureServer.ps1" `
     -Context $ctx `

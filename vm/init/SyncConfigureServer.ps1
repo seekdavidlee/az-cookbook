@@ -13,8 +13,10 @@ $ip = (Invoke-RestMethod -Uri 'https://api.ipify.org?format=json').ip
 
 Add-AzStorageAccountNetworkRule -ResourceGroupName $ResourceGroupName -AccountName $StorageAccountName -IPAddressOrRange $ip
 
-Write-Host "Waiting 3 seconds before applying update..."
-Start-Sleep -Seconds 3
+Write-Host "Waiting 6 seconds before applying update..."
+Start-Sleep -Seconds 6
+
+(Get-AzStorageAccountNetworkRuleSet -ResourceGroupName $ResourceGroupName -AccountName $StorageAccountName).IPRules
 
 Set-AzStorageBlobContent -Container "deploy" `
     -File "$RootDirectory/vm/init/ConfigureServer.ps1" -Blob "ConfigureServer.ps1" `

@@ -36,7 +36,7 @@ $lb = New-AzLoadBalancer `
     -Tag $Tags `
     -ResourceGroupName $ResourceGroupName `
     -Name "${StackName}-LoadBalancer" `
-    -SKU Standard `
+    -SKU Basic `
     -Location $LocationName `
     -FrontendIpConfiguration $feip `
     -BackendAddressPool $bepool `

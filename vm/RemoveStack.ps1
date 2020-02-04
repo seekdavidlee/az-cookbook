@@ -1,4 +1,4 @@
-param($ResourceGroupName, $StackValue)
+param($ConnectionName, $ResourceGroupName, $StackValue)
 
 $ErrorActionPreference = "Stop"
 

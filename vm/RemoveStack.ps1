@@ -1,4 +1,11 @@
-param($ResourceGroupName, $StackValue)
+param($ConnectionName, $ResourceGroupName, $StackValue)
+
+$ErrorActionPreference = "Stop"
+
+$Conn = Get-AutomationConnection -Name $ConnectionName
+
+Connect-AzAccount -ServicePrincipal -Tenant $Conn.TenantId `
+    -ApplicationId $Conn.ApplicationId -CertificateThumbprint $Conn.CertificateThumbprint
 
 $retryList = @()
 Get-AzResource -ResourceGroupName $ResourceGroupName -TagValue $StackValue | ForEach-Object {

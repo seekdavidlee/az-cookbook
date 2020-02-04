@@ -16,7 +16,7 @@ Write-Host "Creating Public IP $PublicIPName"
 # Standard sku load balancer must reference Standard Sku public ip
 # Standard sku public ip must have allocation method set to static
 $PublicIP = New-AzPublicIpAddress -ResourceGroupName $ResourceGroupName -Location $LocationName -Name $PublicIPName `
-    -AllocationMethod Static -IdleTimeoutInMinutes 4 -Tag $Tags -DomainNameLabel $StackName -Sku Standard
+    -AllocationMethod Static -IdleTimeoutInMinutes 4 -Tag $Tags -DomainNameLabel $StackName -Sku Basic
 
 $feip = New-AzLoadBalancerFrontendIpConfig -Name "${StackName}-FrontEndPool" -PublicIpAddress $PublicIP  
 $bepool = New-AzLoadBalancerBackendAddressPoolConfig -Name "${StackName}-BackEndPool"

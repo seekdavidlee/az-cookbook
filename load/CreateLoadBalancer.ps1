@@ -1,6 +1,11 @@
-param($ResourceGroupName, $StackName)
+param($ResourceGroupName, $StackName, $ConnectionName)
 
 $ErrorActionPreference = "Stop"
+
+$Conn = Get-AutomationConnection -Name $ConnectionName
+
+Connect-AzAccount -ServicePrincipal -Tenant $Conn.TenantId `
+    -ApplicationId $Conn.ApplicationId -CertificateThumbprint $Conn.CertificateThumbprint
 
 $Tags = @{"stack-name"="${StackName}"}
 $LocationName = (Get-AzResourceGroup -Name $ResourceGroupName).Location

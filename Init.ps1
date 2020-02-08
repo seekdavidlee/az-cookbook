@@ -40,16 +40,17 @@ function EnableSubnetAccessToStorage($ResourceGroupName, $Region, $AccountName) 
     $StorageServiceEndpoint = "Microsoft.Storage"
     Get-AzVirtualNetworkSubnetConfig -VirtualNetwork $VirtualNetwork | ForEach-Object {
 
+        $subnetName = $_.Name
         if ($_.ServiceEndpoints) { 
             if (($_.ServiceEndpoints | Where { $_.Service -eq $StorageServiceEndpoint }).Count -gt 0) {
-                Write-Host "$StorageServiceEndpoint service endpoint exist."
+                Write-Host "$StorageServiceEndpoint service endpoint exist on $subnetName."
                 return
             }
             
             $_.ServiceEndpoints
         }
 
-        Set-AzVirtualNetworkSubnetConfig -Name $_.Name `
+        Set-AzVirtualNetworkSubnetConfig -Name $subnetName `
             -AddressPrefix $_.AddressPrefix `
             -VirtualNetwork $VirtualNetwork `
             -ServiceEndpoint $StorageServiceEndpoint | Set-AzVirtualNetwork

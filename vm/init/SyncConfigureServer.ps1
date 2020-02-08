@@ -23,6 +23,10 @@ for($i = 0; $i -lt 5; $i++) {
             -Force
     }
     catch {
+
+        $ex = $_
+        Write-Host "Error Handling $ex"
+
         if ($Error.Count -gt $lastErrorCount -and $Error[$Error.Count - 1].ToString().Contains("HTTP Status Code: 403")) {
             $lastErrorCount = $Error.Count
             Write-Host "Retry $i"

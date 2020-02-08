@@ -39,6 +39,7 @@ function EnableSubnetAccessToStorage($ResourceGroupName, $Region, $AccountName) 
 
     Get-AzVirtualNetworkSubnetConfig -VirtualNetwork $VirtualNetwork | ForEach-Object {
 
+        $_
         $_.ServiceEndpoint
         return
         Set-AzVirtualNetworkSubnetConfig -Name $_.Name `

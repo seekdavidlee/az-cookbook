@@ -16,21 +16,24 @@ Add-AzStorageAccountNetworkRule -ResourceGroupName $ResourceGroupName -AccountNa
 $lastErrorCount = $Error.Count
 for($i = 0; $i -lt 5; $i++) {
 
-    Set-AzStorageBlobContent -Container "deploy" `
-    -File "$RootDirectory/vm/init/ConfigureServer.ps1" -Blob "ConfigureServer.ps1" `
-    -Context $ctx `
-    -Force
-    
-    if ($Error.Count -gt $lastErrorCount -and $Error[$Error.Count - 1].ToString().Contains("HTTP Status Code: 403")) {
-        $lastErrorCount = $Error.Count
-        Write-Host "Retry $i"
-        # Increment wait by additional seconds
-        $wait = $i + 3
-        Write-Host "Waiting $wait seconds"
-        Start-Sleep -Seconds $wait
-    } else {
-        Write-Host "Done!"
-        break
+    try {
+        Set-AzStorageBlobContent -Container "deploy" `
+            -File "$RootDirectory/vm/init/ConfigureServer.ps1" -Blob "ConfigureServer.ps1" `
+            -Context $ctx `
+            -Force
+    }
+    catch {
+        if ($Error.Count -gt $lastErrorCount -and $Error[$Error.Count - 1].ToString().Contains("HTTP Status Code: 403")) {
+            $lastErrorCount = $Error.Count
+            Write-Host "Retry $i"
+            # Increment wait by additional seconds
+            $wait = $i + 3
+            Write-Host "Waiting $wait seconds"
+            Start-Sleep -Seconds $wait
+        } else {
+            Write-Host "Done!"
+            break
+        }
     }
 }
 

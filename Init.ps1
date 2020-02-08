@@ -167,7 +167,8 @@ EnableSubnetAccessToStorage -AccountName $AccountName -Region $Region2 -Resource
 $StorageContext = New-AzStorageContext -StorageAccountName $AccountName
 $DeployContainerName = "deploy"
 
-if (!(Get-AzStorageContainer -Name $DeployContainerName -Context $StorageContext)) {
+if (!(Get-AzStorageContainer -Name $DeployContainerName -Context $StorageContext `
+    -ErrorAction SilentlyContinue)) {
     New-AzureStorageContainer -Name $DeployContainerName -Context $StorageContext
 } else {
     Write-Host "Container $DeployContainerName already exist."

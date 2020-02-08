@@ -1,8 +1,8 @@
 param(
     $RootDirectory,
-    $ResourceGroupName, 
-    $StorageAccountName)
+    $ResourceGroupName)
 
+$StorageAccountName = (Get-AzStorageAccount -ResourceGroupName $ResourceGroupName).StorageAccountName
 $storageAccountKey = (Get-AzStorageAccountKey -ResourceGroupName $ResourceGroupName `
     -Name $StorageAccountName).Value[0]
 

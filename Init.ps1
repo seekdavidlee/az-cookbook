@@ -163,3 +163,12 @@ if (!(Get-AzStorageAccount -ResourceGroupName $ResourceGroupName `
 
 EnableSubnetAccessToStorage -AccountName $AccountName -Region $Region -ResourceGroupName $ResourceGroupName
 EnableSubnetAccessToStorage -AccountName $AccountName -Region $Region2 -ResourceGroupName $ResourceGroupName
+
+$StorageContext = New-AzStorageContext -StorageAccountName $AccountName
+$DeployContainerName = "deploy"
+
+if (!(Get-AzStorageContainer -Name $DeployContainerName -Context $StorageContext)) {
+    New-AzureStorageContainer -Name $DeployContainerName -Context $StorageContext
+} else {
+    Write-Host "Container $DeployContainerName already exist."
+}

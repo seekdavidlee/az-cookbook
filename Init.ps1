@@ -37,15 +37,22 @@ function EnableSubnetAccessToStorage($ResourceGroupName, $Region, $AccountName) 
     $VirtualNetwork = Get-AzVirtualNetwork -Name "$Region-${ResourceGroupName}vn" `
         -ResourceGroupName $ResourceGroupName     
 
+    $StorageServiceEndpoint = "Microsoft.Storage"
     Get-AzVirtualNetworkSubnetConfig -VirtualNetwork $VirtualNetwork | ForEach-Object {
 
-        $_
-        $_.ServiceEndpoint
-        return
+        if ($_.ServiceEndpoints) { 
+            if (($_.ServiceEndpoints | Where { $_.Service -eq $StorageServiceEndpoint }).Count -gt 0) {
+                Write-Host "$StorageServiceEndpoint service endpoint exist."
+                return
+            }
+            
+            $_.ServiceEndpoints
+        }
+
         Set-AzVirtualNetworkSubnetConfig -Name $_.Name `
             -AddressPrefix $_.AddressPrefix `
             -VirtualNetwork $VirtualNetwork `
-            -ServiceEndpoint "Microsoft.Storage" | Set-AzVirtualNetwork
+            -ServiceEndpoint $StorageServiceEndpoint | Set-AzVirtualNetwork
 
         # See: https://docs.microsoft.com/en-us/azure/cosmos-db/how-to-configure-vnet-service-endpoint
         # See: https://docs.microsoft.com/en-us/powershell/module/az.network/set-azvirtualnetworksubnetconfig?view=azps-3.4.0

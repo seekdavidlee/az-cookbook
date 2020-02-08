@@ -13,37 +13,12 @@ $ip = (Invoke-RestMethod -Uri 'https://api.ipify.org?format=json').ip
 
 Add-AzStorageAccountNetworkRule -ResourceGroupName $ResourceGroupName -AccountName $StorageAccountName -IPAddressOrRange $ip
 
-$lastErrorCount = $Error.Count
-for($i = 0; $i -lt 5; $i++) {
+$status = Set-AzStorageBlobContent -Container "deploy" `
+    -File "$RootDirectory/vm/init/ConfigureServer.ps1" -Blob "ConfigureServer.ps1" `
+    -Context $ctx `
+    -Force
 
-    try {
-        $status = Set-AzStorageBlobContent -Container "deploy" `
-            -File "$RootDirectory/vm/init/ConfigureServer.ps1" -Blob "ConfigureServer.ps1" `
-            -Context $ctx `
-            -Force
-
-        if ($status) {
-            Write-Host "It is $status"
-        }
-    }
-    catch {
-
-        $ex = $_
-        Write-Host "Error Handling $ex"
-
-        if ($Error.Count -gt $lastErrorCount -and $Error[$Error.Count - 1].ToString().Contains("HTTP Status Code: 403")) {
-            $lastErrorCount = $Error.Count
-            Write-Host "Retry $i"
-            # Increment wait by additional seconds
-            $wait = $i + 3
-            Write-Host "Waiting $wait seconds"
-            Start-Sleep -Seconds $wait
-        } else {
-            Write-Host "Done!"
-            break
-        }
-    }
-}
+$status
 
 # Remove Cloud Shell ip from allow list since we are done.
 Remove-AzStorageAccountNetworkRule -ResourceGroupName $ResourceGroupName -AccountName $StorageAccountName -IPAddressOrRange $ip

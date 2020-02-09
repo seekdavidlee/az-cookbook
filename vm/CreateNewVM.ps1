@@ -116,12 +116,14 @@ if (!$IsPrivate) {
         -SubnetId $subnet.Id `
         -Tag $Tags `
         -PublicIpAddressId $PublicIP.Id `
-        -NetworkSecurityGroupId $NSG.Id
+        -NetworkSecurityGroupId $NSG.Id `
+        -Force
 } else {
     $NIC = New-AzNetworkInterface -Name $NICName -ResourceGroupName $ResourceGroupName -Location $Region `
         -SubnetId $subnet.Id `
         -Tag $Tags `
-        -NetworkSecurityGroupId $NSG.Id
+        -NetworkSecurityGroupId $NSG.Id `
+        -Force
 }
 
 $Credential = New-Object System.Management.Automation.PSCredential ($VMLocalAdminUser, $VMLocalAdminSecurePassword);
@@ -132,7 +134,7 @@ $VirtualMachine = Add-AzVMNetworkInterface -VM $VirtualMachine -Id $NIC.Id
 $VirtualMachine = Set-AzVMOSDisk -VM $VirtualMachine -Name "${ComputerName}-osdisk" -CreateOption FromImage `
     -StorageAccountType "Standard_LRS" -DiskSizeInGB 40 -Caching ReadWrite
 $VirtualMachine = Set-AzVMSourceImage -VM $VirtualMachine -PublisherName 'MicrosoftWindowsServer' -Offer 'WindowsServer' -Skus $WindowsSkuName -Version latest
-$VirtualMachine | Set-AzVMBootDiagnostic -Enable -ResourceGroupName $ResourceGroupName -StorageAccountName $StorageAccountName
+$VirtualMachine | Set-AzVMBootDiagnostic -Enable -ResourceGroupName $OpsResourceGroupName -StorageAccountName $StorageAccountName
 
 Write-Host "Creating VM $VMName..."
 New-AzVM -ResourceGroupName $ResourceGroupName -Location $Region -VM $VirtualMachine -Verbose

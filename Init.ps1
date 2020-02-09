@@ -126,12 +126,17 @@ if (!(Get-AzADServicePrincipal -DisplayName $SpName)) {
     Remove-Item "./$CertName" -Force
 
     $SubscriptionId = (Get-AzResourceGroup -Name $ResourceGroupName).ResourceId.Split('/')[2]
+    
+    $UserSp
+    
     $FieldValues = @{ 
         "SubscriptionId" = $SubscriptionId;
         "ApplicationId" = $UserSp.appId;
         "TenantId" = $UserSp.tenant;
         "CertificateThumbprint" = $Cert.Thumbprint;
     }
+
+    $FieldValues
     
     New-AzAutomationConnection -Name $SpName `
         -ConnectionTypeName Azure `

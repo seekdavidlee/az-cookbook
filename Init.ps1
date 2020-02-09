@@ -145,6 +145,11 @@ $aad = Get-AzADServicePrincipal -DisplayName $SpName
 Set-AzKeyVaultAccessPolicy -VaultName $VaultName -ObjectId $aad.Id `
     -PermissionsToSecrets get,set,list
 
+# https://docs.microsoft.com/en-us/azure/virtual-machines/windows/disk-encryption-key-vault#azure-powershell-2 
+Set-AzKeyVaultAccessPolicy -VaultName $VaultName `
+    -ResourceGroupName $ResourceGroupName `
+    -EnabledForDiskEncryption
+
 CreateVirtualNetworkIfNotExist -ResourceGroupName $ResourceGroupName -Region $region -Prefix "10.0"
 CreateVirtualNetworkIfNotExist -ResourceGroupName $ResourceGroupName -Region $region2 -Prefix "10.1"
 

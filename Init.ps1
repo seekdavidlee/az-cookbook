@@ -196,7 +196,15 @@ if (!(Get-AzStorageContainer -Name $DeployContainerName -Context $StorageContext
 }
 
 $BaseUrl = "https://www.powershellgallery.com/api/v2/package"
-$Packages = @("Az.Automation/1.3.5", "Az.KeyVault/1.4.0", "Az.Compute/3.4.0", "Az.Accounts/1.7.0")
+
+$Packages = @(
+    "Az.Automation/1.3.5", 
+    "Az.KeyVault/1.4.0", 
+    "Az.Storage/1.11.0", 
+    "Az.Resources/1.9.1", 
+    "Az.Network/2.2.1", 
+    "Az.Compute/3.4.0", 
+    "Az.Accounts/1.7.0")
 
 $Packages | ForEach-Object {
 

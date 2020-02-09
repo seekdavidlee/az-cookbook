@@ -17,11 +17,10 @@ $lastErrorCount = $Error.Count
 
 for($i = 0; $i -lt 5; $i++) {
 
-Set-AzStorageBlobContent -Container "deploy" `
-    -File "$RootDirectory/vm/init/ConfigureServer.ps1" -Blob "ConfigureServer.ps1" `
-    -Context $ctx `
-    -ErrorAction SilentlyContinue `
-    -Force
+    Set-AzStorageBlobContent -Container "deploy" `
+        -File "$RootDirectory/vm/init/ConfigureServer.ps1" -Blob "ConfigureServer.ps1" `
+        -Context $ctx `
+        -Force
 
     if ($Error.Count -gt $lastErrorCount) {
 

@@ -196,18 +196,25 @@ if (!(Get-AzStorageContainer -Name $DeployContainerName -Context $StorageContext
 }
 
 $BaseUrl = "https://www.powershellgallery.com/api/v2/package"
-$Packages = @("Az.Automation/1.3.5", "Az.Accounts/1.7.0")
+$Packages = @("Az.Automation/1.3.5", "Az.Compute/3.4.0", "Az.Accounts/1.7.0")
 
 $Packages | ForEach-Object {
 
     $path = $_
     $moduleName = $path.Split('/')[0]
     
-    Write-Host "Adding $path"
+    Write-Host "Processing $path"
 
-    New-AzAutomationModule -AutomationAccountName $AutomationAccountName `
-    -ResourceGroupName $ResourceGroupName `
+    if (!(Get-AzAutomationModule -AutomationAccountName $AutomationAccountName `
     -Name $moduleName `
-    -ContentLinkUri "$BaseUrl/$path"    
+    -ErrorAction SilentlyContinue)) {
+
+        Write-Host "Adding $moduleName"
+        
+        New-AzAutomationModule -AutomationAccountName $AutomationAccountName `
+            -ResourceGroupName $ResourceGroupName `
+            -Name $moduleName `
+            -ContentLinkUri "$BaseUrl/$path"  
+    }
 }
 

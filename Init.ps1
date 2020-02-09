@@ -202,6 +202,8 @@ $Packages | ForEach-Object {
 
     $path = $_
     $moduleName = $path.Split('/')[0]
+    
+    Write-Host "Adding $path"
 
     New-AzAutomationModule -AutomationAccountName $AutomationAccountName `
     -ResourceGroupName $ResourceGroupName `

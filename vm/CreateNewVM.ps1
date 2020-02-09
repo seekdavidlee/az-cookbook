@@ -170,10 +170,23 @@ if ($KeyVaultName) {
         -DiskEncryptionKeyVaultUrl $keyVault.VaultUri -DiskEncryptionKeyVaultId $keyVault.ResourceId -Force
 }
 
+Write-Host "Enabling Antimalware"
+
+$SettingsString = "{ ""AntimalwareEnabled"": true }"
+
+Set-AzVMExtension -ResourceGroupName $ResourceGroupName `
+    -Location $Region `
+    -VMName $VMName `
+    -Name "IaaSAntimalware" `
+    -Publisher "Microsoft.Azure.Security" `
+    -Type "IaaSAntimalware" `
+    -TypeHandlerVersion "1.3" `
+    -SettingString $SettingsString
+
 if ($Web -or $DotNetCore) {
     Write-Host "Configuring $VMName..."
 
-    $storageAccountKey = (Get-AzStorageAccountKey -ResourceGroupName $ResourceGroupName `
+    $storageAccountKey = (Get-AzStorageAccountKey -ResourceGroupName $OpsResourceGroupName `
         -Name $StorageAccountName).Value[0]
 
     $args = ""
@@ -188,7 +201,7 @@ if ($Web -or $DotNetCore) {
 
     if ($Git) {
         $args += " -Git"
-    }    
+    }
 
     Set-AzVMCustomScriptExtension -ResourceGroupName $ResourceGroupName `
         -Name "ConfigureServer" `

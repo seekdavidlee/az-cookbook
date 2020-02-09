@@ -14,6 +14,7 @@ $ip = (Invoke-RestMethod -Uri 'https://api.ipify.org?format=json').ip
 Add-AzStorageAccountNetworkRule -ResourceGroupName $ResourceGroupName -AccountName $StorageAccountName -IPAddressOrRange $ip
 
 $lastErrorCount = $Error.Count
+$lastErrorCount
 Set-AzStorageBlobContent -Container "deploy" `
     -File "$RootDirectory/vm/init/ConfigureServer.ps1" -Blob "ConfigureServer.ps1" `
     -Context $ctx `

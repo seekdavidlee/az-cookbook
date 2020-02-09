@@ -1,4 +1,5 @@
 param(
+    $ConnectionName,
     $ResourceGroupName, 
     $StackName, 
     $VMSize, 
@@ -13,6 +14,11 @@ param(
 
 $ErrorActionPreference = "Stop"
 
+$Conn = Get-AutomationConnection -Name $ConnectionName
+
+Connect-AzAccount -ServicePrincipal -Tenant $Conn.TenantId `
+    -ApplicationId $Conn.ApplicationId -CertificateThumbprint $Conn.CertificateThumbprint
+
 $tag = @{ "purpose"="system-operations" }
 $OpsResourceGroupName = (Get-AzResourceGroup -Tag $tag).ResourceGroupName
 
@@ -25,14 +31,8 @@ if (!(Get-AzResourceGroup -Name $ResourceGroupName -ErrorAction SilentlyContinue
     New-AzResourceGroup -Name $ResourceGroupName -Location $Region
 }
 
-$ConnectionName = (Get-AzResource -ResourceGroupName $OpsResourceGroupName -ResourceType Microsoft.Automation/automationAccounts).Name
 $KeyVaultName = (Get-AzResource -ResourceGroupName $OpsResourceGroupName -ResourceType Microsoft.KeyVault/vaults).Name
 $StorageAccountName = (Get-AzResource -ResourceGroupName $OpsResourceGroupName -ResourceType Microsoft.Storage/storageAccounts).Name
-
-$Conn = Get-AutomationConnection -Name $ConnectionName
-
-Connect-AzAccount -ServicePrincipal -Tenant $Conn.TenantId `
-    -ApplicationId $Conn.ApplicationId -CertificateThumbprint $Conn.CertificateThumbprint
 
 if ($StackPrefix) {
     Write-Host "Using Prefix $StackPrefix"

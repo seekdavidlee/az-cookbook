@@ -16,19 +16,18 @@ $ctx = New-AzStorageContext -StorageAccountName $StorageAccountName -StorageAcco
 # Temporary add Cloud Shell ip to allow list.
 $ip = (Invoke-RestMethod -Uri 'https://api.ipify.org?format=json').ip
 
-try {
-    Add-AzStorageAccountNetworkRule -ResourceGroupName $ResourceGroupName `
+$lastErrorCount = $Error.Count
+
+Add-AzStorageAccountNetworkRule -ResourceGroupName $ResourceGroupName `
     -AccountName $StorageAccountName `
     -IPAddressOrRange $ip  
-}
-catch {
-    $_
-    Write-Host "Erro"
-    return
-}
-Write-Host "Finish"
-return
 
+if ($Error.Count -gt $lastErrorCount) {
+    $lastErrorMessage = $Error[0].ToString()
+    if (!$lastErrorMessage.Contains("Values for request parameters are invalid")) {
+        throw $lastErrorMessage
+    }
+}
 
 Write-Host "Root Directory: $RootDirectory"
 

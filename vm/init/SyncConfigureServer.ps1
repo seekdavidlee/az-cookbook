@@ -20,7 +20,7 @@ Write-Host "Root Directory: $RootDirectory"
 
 $lastErrorCount = $Error.Count
 
-for($i = 0; $i -lt 5; $i++) {
+for($i = 0; $i -lt 8; $i++) {
 
     Set-AzStorageBlobContent -Container "deploy" `
         -File "$RootDirectory/vm/init/ConfigureServer.ps1" -Blob "ConfigureServer.ps1" `
@@ -48,3 +48,5 @@ for($i = 0; $i -lt 5; $i++) {
 
 # Remove Cloud Shell ip from allow list since we are done.
 Remove-AzStorageAccountNetworkRule -ResourceGroupName $ResourceGroupName -AccountName $StorageAccountName -IPAddressOrRange $ip
+
+$Error.Clear()

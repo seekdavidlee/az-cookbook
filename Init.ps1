@@ -194,3 +194,18 @@ if (!(Get-AzStorageContainer -Name $DeployContainerName -Context $StorageContext
 } else {
     Write-Host "Container $DeployContainerName already exist."
 }
+
+$BaseUrl = "https://www.powershellgallery.com/api/v2/package"
+$Packages = @("Az.Automation/1.3.5", "Az.Accounts/1.7.0")
+
+$Packages | ForEach-Object {
+
+    $path = $_
+    $moduleName = $path.Split('/')[0]
+
+    New-AzAutomationModule -AutomationAccountName $AccountName `
+    -ResourceGroupName $ResourceGroupName `
+    -Name $moduleName `
+    -ContentLinkUri "$BaseUrl/$path"    
+}
+

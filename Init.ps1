@@ -174,12 +174,23 @@ $lastErrorCount = $Error.Count
 if (!(Get-AzStorageContainer -Name $DeployContainerName -Context $StorageContext `
     -ErrorAction SilentlyContinue)) {
 
+    $skipNewStorage = $False
     if ($Error.Count -gt $lastErrorCount) {
             $lastErrorMessage = $Error[0].ToString()
-            throw $lastErrorMessage
-            return
+
+            if ($lastErrorMessage.Containts("HTTP Status Code: 403")) {
+                Write-Host "Container $DeployContainerName MAY already exist."
+                $skipNewStorage = $True
+            } else {
+                throw $lastErrorMessage
+                return
+            }
     }
-    New-AzStorageContainer -Name $DeployContainerName -Context $StorageContext
+
+    if (!$skipNewStorage) {
+        New-AzStorageContainer -Name $DeployContainerName -Context $StorageContext
+    }
+    
 } else {
     Write-Host "Container $DeployContainerName already exist."
 }

@@ -16,10 +16,17 @@ $ctx = New-AzStorageContext -StorageAccountName $StorageAccountName -StorageAcco
 # Temporary add Cloud Shell ip to allow list.
 $ip = (Invoke-RestMethod -Uri 'https://api.ipify.org?format=json').ip
 
-Add-AzStorageAccountNetworkRule -ResourceGroupName $ResourceGroupName `
+try {
+    Add-AzStorageAccountNetworkRule -ResourceGroupName $ResourceGroupName `
     -AccountName $StorageAccountName `
-    -ErrorAction Stop `
-    -IPAddressOrRange $ip
+    -IPAddressOrRange $ip  
+}
+catch {
+    $_
+    return
+}
+return
+
 
 Write-Host "Root Directory: $RootDirectory"
 

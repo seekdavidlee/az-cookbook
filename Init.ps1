@@ -205,10 +205,12 @@ $Packages | ForEach-Object {
     
     Write-Host "Processing $path"
 
-    if (!(Get-AzAutomationModule -AutomationAccountName $AutomationAccountName `
+    $stat = Get-AzAutomationModule -AutomationAccountName $AutomationAccountName `
     -ResourceGroupName $ResourceGroupName `
     -Name $moduleName `
-    -ErrorAction SilentlyContinue)) {
+    -ErrorAction SilentlyContinue
+
+    if (!($stat)) {
 
         Write-Host "Adding $moduleName"
 
@@ -216,6 +218,8 @@ $Packages | ForEach-Object {
             -ResourceGroupName $ResourceGroupName `
             -Name $moduleName `
             -ContentLinkUri "$BaseUrl/$path"  
+    } else {
+        $stat
     }
 }
 

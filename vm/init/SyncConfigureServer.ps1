@@ -5,6 +5,7 @@ $ResourceGroupName = (Get-AzResourceGroup -Tag $tag).ResourceGroupName
 
 if (!$ResourceGroupName) {
     throw "Unable to find valid resource group"
+    return
 }
 
 $StorageAccountName = (Get-AzStorageAccount -ResourceGroupName $ResourceGroupName).StorageAccountName

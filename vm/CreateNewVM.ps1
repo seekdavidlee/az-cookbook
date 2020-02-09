@@ -1,12 +1,10 @@
-param($ResourceGroupName, 
+param(
+    $ResourceGroupName, 
     $StackName, 
     $VMSize, 
     $WindowsSkuName, 
-    $KeyVaultName, 
-    $StorageAccountName, 
     $StackPrefix, 
     $Region,
-    $ConnectionName,
     [switch] $Web, 
     [switch] $DotNetCore, 
     [switch] $Git, 
@@ -14,6 +12,22 @@ param($ResourceGroupName,
     [switch] $IsPrivate)
 
 $ErrorActionPreference = "Stop"
+
+$tag = @{ "purpose"="system-operations" }
+$OpsResourceGroupName = (Get-AzResourceGroup -Tag $tag).ResourceGroupName
+
+if (!$OpsResourceGroupName) {
+    throw "Unable to find valid resource group"
+    return
+}
+
+if (!(Get-AzResourceGroup -Name $ResourceGroupName -ErrorAction SilentlyContinue)) {
+    New-AzResourceGroup -Name $ResourceGroupName -Location $Region
+}
+
+$ConnectionName = (Get-AzResource -ResourceGroupName $OpsResourceGroupName -ResourceType Microsoft.Automation/automationAccounts).Name
+$KeyVaultName = (Get-AzResource -ResourceGroupName $OpsResourceGroupName -ResourceType Microsoft.KeyVault/vaults).Name
+$StorageAccountName = (Get-AzResource -ResourceGroupName $OpsResourceGroupName -ResourceType Microsoft.Storage/storageAccounts).Name
 
 $Conn = Get-AutomationConnection -Name $ConnectionName
 

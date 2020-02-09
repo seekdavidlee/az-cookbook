@@ -89,7 +89,9 @@ if (!$IsPrivate) {
     Write-Host "Did not allocate public ip because this is a private vm"
 }
 
-$NSG = New-AzNetworkSecurityGroup -ResourceGroupName $ResourceGroupName -Location $Region -Name "${VMName}-nsg" -Tag $Tags -Force
+if (!$IsPrivate) {
+    $NSG = New-AzNetworkSecurityGroup -ResourceGroupName $ResourceGroupName -Location $Region -Name "${VMName}-nsg" -Tag $Tags -Force
+}
 
 $IPConfigName = "${VMName}-ipconfig"
 
@@ -101,17 +103,26 @@ if (!$IsPrivate) {
     $IPConfig = New-AzNetworkInterfaceIpConfig -Name $IPConfigName -Subnet $subnet
 }
 
-$Port = "80"
-$Priority = 300
-$NSG | Add-AzNetworkSecurityRuleConfig -Name "Allow_$Port" -Protocol Tcp -Direction Inbound `
-    -Priority $Priority -SourceAddressPrefix * -SourcePortRange * `
-    -DestinationAddressPrefix * -DestinationPortRange $Port -Access Allow | Set-AzNetworkSecurityGroup
+if (!$IsPrivate) {
+    $Port = "80"
+    $Priority = 300
+    $NSG | Add-AzNetworkSecurityRuleConfig -Name "Allow_$Port" -Protocol Tcp -Direction Inbound `
+        -Priority $Priority -SourceAddressPrefix * -SourcePortRange * `
+        -DestinationAddressPrefix * -DestinationPortRange $Port -Access Allow | Set-AzNetworkSecurityGroup
+
+    $Port = "22"
+    $Priority = 340
+    $NSG | Add-AzNetworkSecurityRuleConfig -Name "Allow_$Port" -Protocol Tcp -Direction Inbound `
+        -Priority $Priority -SourceAddressPrefix * -SourcePortRange * `
+        -DestinationAddressPrefix * -DestinationPortRange $Port -Access Allow | Set-AzNetworkSecurityGroup
+}
 
 $NICName = "${ComputerName}-nic"
 
 Write-Host "Creating NIC $NICName for VM"
 
 if (!$IsPrivate) {
+    # Must have network security group if there's public IP.
     $NIC = New-AzNetworkInterface -Name $NICName -ResourceGroupName $ResourceGroupName -Location $Region `
         -SubnetId $subnet.Id `
         -Tag $Tags `
@@ -119,10 +130,11 @@ if (!$IsPrivate) {
         -NetworkSecurityGroupId $NSG.Id `
         -Force
 } else {
+
+    # If private, use network security group from subnet
     $NIC = New-AzNetworkInterface -Name $NICName -ResourceGroupName $ResourceGroupName -Location $Region `
         -SubnetId $subnet.Id `
         -Tag $Tags `
-        -NetworkSecurityGroupId $NSG.Id `
         -Force
 }
 

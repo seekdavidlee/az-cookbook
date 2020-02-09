@@ -203,7 +203,7 @@ $Packages | ForEach-Object {
     $path = $_
     $moduleName = $path.Split('/')[0]
 
-    New-AzAutomationModule -AutomationAccountName $AccountName `
+    New-AzAutomationModule -AutomationAccountName $AutomationAccountName `
     -ResourceGroupName $ResourceGroupName `
     -Name $moduleName `
     -ContentLinkUri "$BaseUrl/$path"    

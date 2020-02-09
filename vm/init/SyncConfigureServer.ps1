@@ -13,6 +13,8 @@ $ip = (Invoke-RestMethod -Uri 'https://api.ipify.org?format=json').ip
 
 Add-AzStorageAccountNetworkRule -ResourceGroupName $ResourceGroupName -AccountName $StorageAccountName -IPAddressOrRange $ip
 
+Write-Host "Root Directory: $RootDirectory"
+
 $lastErrorCount = $Error.Count
 
 for($i = 0; $i -lt 5; $i++) {

@@ -141,7 +141,8 @@ if (!(Get-AzADServicePrincipal -DisplayName $SpName)) {
         -AutomationAccountName $AutomationAccountName    
 }
 
-Set-AzKeyVaultAccessPolicy -VaultName $VaultName  -ServicePrincipalName $SpName `
+$aad = Get-AzADServicePrincipal -DisplayName $SpName
+Set-AzKeyVaultAccessPolicy -VaultName $VaultName -ObjectId $aad.Id `
     -PermissionsToSecrets get,set,list
 
 CreateVirtualNetworkIfNotExist -ResourceGroupName $ResourceGroupName -Region $region -Prefix "10.0"

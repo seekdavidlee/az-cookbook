@@ -206,11 +206,12 @@ $Packages | ForEach-Object {
     Write-Host "Processing $path"
 
     if (!(Get-AzAutomationModule -AutomationAccountName $AutomationAccountName `
+    -ResourceGroupName $ResourceGroupName `
     -Name $moduleName `
     -ErrorAction SilentlyContinue)) {
 
         Write-Host "Adding $moduleName"
-        
+
         New-AzAutomationModule -AutomationAccountName $AutomationAccountName `
             -ResourceGroupName $ResourceGroupName `
             -Name $moduleName `

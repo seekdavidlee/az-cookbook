@@ -55,12 +55,12 @@ $VMLocalAdminSecurePassword = ConvertTo-SecureString $password -AsPlainText -For
 
 $VMName = $ComputerName
 $Tags = @{"stack-name"="${StackName}-${prefix}"}
-$VnetName = "$Region-$StackName-vnet"
+$VnetName = "$Region-${ResourceGroupName}vn"
 
 if ($Backend) {
-    $SubnetName = "$Region-$StackName-backend"
+    $SubnetName = "$Region-backend-subnet"
 }else {
-    $SubnetName = "$Region-$StackName-frontend"
+    $SubnetName = "$Region-frontend-subnet"
 }
 
 $subnet = (Get-AzVirtualNetwork -Name $VnetName).Subnets | ? { $_.Name -eq $SubnetName }

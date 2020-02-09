@@ -13,13 +13,14 @@ $ip = (Invoke-RestMethod -Uri 'https://api.ipify.org?format=json').ip
 
 Add-AzStorageAccountNetworkRule -ResourceGroupName $ResourceGroupName -AccountName $StorageAccountName -IPAddressOrRange $ip
 
-$status = Set-AzStorageBlobContent -Container "deploy" `
+$lastErrorCount = $Error.Count
+Set-AzStorageBlobContent -Container "deploy" `
     -File "$RootDirectory/vm/init/ConfigureServer.ps1" -Blob "ConfigureServer.ps1" `
     -Context $ctx `
     -ErrorAction SilentlyContinue `
     -Force
 
-$status
+$Error.Count
 
 # Remove Cloud Shell ip from allow list since we are done.
 Remove-AzStorageAccountNetworkRule -ResourceGroupName $ResourceGroupName -AccountName $StorageAccountName -IPAddressOrRange $ip

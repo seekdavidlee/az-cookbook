@@ -24,7 +24,7 @@ for($i = 0; $i -lt 5; $i++) {
 
     if ($Error.Count -gt $lastErrorCount) {
 
-        $lastErrorMessage = $Error[$Error.Count - 1].ToString()
+        $lastErrorMessage = $Error[0].ToString()
         if ($lastErrorMessage.Contains("HTTP Status Code: 403")) {
             $lastErrorCount = $Error.Count
             Write-Host "Retry $i"

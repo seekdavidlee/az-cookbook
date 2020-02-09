@@ -1,7 +1,7 @@
 param($RootDirectory)
 
 $tag = @{ "purpose"="system-operations" }
-$ResourceGroupName = (Get-AzResourceGroup -Tag $tag).Name
+$ResourceGroupName = (Get-AzResourceGroup -Tag $tag).ResourceGroupName
 
 if (!$ResourceGroupName) {
     throw "Unable to find valid resource group"

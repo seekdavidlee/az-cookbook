@@ -1,6 +1,7 @@
-param(
-    $RootDirectory,
-    $ResourceGroupName)
+param($RootDirectory)
+
+$tag = @{ "purpose"="system-operations" }
+$ResourceGroupName = (Get-AzResourceGroup -Tag $tag).Name
 
 $StorageAccountName = (Get-AzStorageAccount -ResourceGroupName $ResourceGroupName).StorageAccountName
 $storageAccountKey = (Get-AzStorageAccountKey -ResourceGroupName $ResourceGroupName `

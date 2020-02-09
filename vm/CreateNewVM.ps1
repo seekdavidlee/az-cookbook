@@ -89,7 +89,7 @@ if (!$IsPrivate) {
     Write-Host "Did not allocate public ip because this is a private vm"
 }
 
-$NSG = New-AzNetworkSecurityGroup -ResourceGroupName $ResourceGroupName -Location $Region -Name "${VMName}-nsg" -Tag $Tags
+$NSG = New-AzNetworkSecurityGroup -ResourceGroupName $ResourceGroupName -Location $Region -Name "${VMName}-nsg" -Tag $Tags -Force
 
 $IPConfigName = "${VMName}-ipconfig"
 

@@ -178,7 +178,7 @@ if (!(Get-AzStorageContainer -Name $DeployContainerName -Context $StorageContext
     if ($Error.Count -gt $lastErrorCount) {
             $lastErrorMessage = $Error[0].ToString()
 
-            if ($lastErrorMessage.Containts("HTTP Status Code: 403")) {
+            if ($lastErrorMessage.Contains("HTTP Status Code: 403")) {
                 Write-Host "Container $DeployContainerName MAY already exist."
                 $skipNewStorage = $True
             } else {

@@ -127,8 +127,6 @@ if (!(Get-AzADServicePrincipal -DisplayName $SpName)) {
 
     $SubscriptionId = (Get-AzResourceGroup -Name $ResourceGroupName).ResourceId.Split('/')[2]
     
-    $UserSp
-    
     $FieldValues = @{ 
         "SubscriptionId" = $SubscriptionId;
         "ApplicationId" = $UserSp.appId;
@@ -136,10 +134,8 @@ if (!(Get-AzADServicePrincipal -DisplayName $SpName)) {
         "CertificateThumbprint" = $Cert.Thumbprint;
     }
 
-    $FieldValues
-    
     New-AzAutomationConnection -Name $SpName `
-        -ConnectionTypeName Azure `
+        -ConnectionTypeName AzureServicePrincipal `
         -ConnectionFieldValues $FieldValues `
         -ResourceGroupName $ResourceGroupName `
         -AutomationAccountName $AutomationAccountName    

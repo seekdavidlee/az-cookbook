@@ -25,14 +25,14 @@ foreach ($ScriptPath in $ScriptPaths) {
 	Write-Host "Processing $RunbookName"
 
 	if ($Publish) {
-		Import-AzureRMAutomationRunbook -Name $RunbookName `
+		Import-AzAutomationRunbook -Name $RunbookName `
 		-Path $ScriptPath `
 		-ResourceGroupName $ResourceGroupName -AutomationAccountName $AutomationAccountName `
 		-Type PowerShell `
 		-Force `
 		-Published
 	} else {
-		Import-AzureRMAutomationRunbook -Name $RunbookName `
+		Import-AzAutomationRunbook -Name $RunbookName `
 		-Path $ScriptPath `
 		-ResourceGroupName $ResourceGroupName -AutomationAccountName $AutomationAccountName `
 		-Type PowerShell `

@@ -1,11 +1,28 @@
-param($VNetName, $ResourceGroupName, $StackName)
+param(
+    $ConnectionName, 
+    $Region, 
+    $ResourceGroupName, 
+    $StackName)
 
 $ErrorActionPreference = "Stop"
 
-$Tags = @{"stack-name"="${StackName}"}
-$LocationName = (Get-AzResourceGroup -Name $ResourceGroupName).Location
+$Conn = Get-AutomationConnection -Name $ConnectionName
 
-$virtualNetwork = Get-AzVirtualNetwork -Name $VNetName
+Connect-AzAccount -ServicePrincipal -Tenant $Conn.TenantId `
+    -ApplicationId $Conn.ApplicationId -CertificateThumbprint $Conn.CertificateThumbprint
+
+$tag = @{ "purpose"="system-operations" }
+$OpsResourceGroupName = (Get-AzResourceGroup -Tag $tag).ResourceGroupName
+
+if (!$OpsResourceGroupName) {
+    throw "Unable to find valid resource group"
+    return
+}
+
+$VirtualNetworkName = "$Region-${OpsResourceGroupName}vn"
+
+$Tags = @{"stack-name"="${StackName}"}
+$virtualNetwork = Get-AzVirtualNetwork -Name $VirtualNetworkName
 
 # This is just my covention, my subnets are always /24, so I can just add one more. However, if a subnet in between 
 # gets removed, then this logic will not work.
@@ -34,7 +51,7 @@ if (!$subnet) {
 
 $PublicIPName = "${StackName}-pip"
 Write-Host "Creating Public IP $PublicIPName"
-$PublicIP = New-AzPublicIpAddress -ResourceGroupName $ResourceGroupName -Location $LocationName -Name $PublicIPName `
+$PublicIP = New-AzPublicIpAddress -ResourceGroupName $ResourceGroupName -Location $Region -Name $PublicIPName `
     -AllocationMethod Static -IdleTimeoutInMinutes 4 -Tag $Tags -DomainNameLabel $StackName -Sku Standard
 
 $ApplicationGatewayIPConfigName = "${StackName}-ipconfig"
@@ -90,14 +107,12 @@ $sku = New-AzApplicationGatewaySku `
   -Tier Standard_v2 `
   -Capacity 2
 
-$LocationName = (Get-AzResourceGroup -Name $ResourceGroupName).Location
-
 $ApplicationGatewayName = "${StackName}-agw"
 Write-Host "Creating application gateway $ApplicationGatewayName"  
 New-AzApplicationGateway `
   -Name $ApplicationGatewayName `
   -ResourceGroupName $ResourceGroupName `
-  -Location $LocationName `
+  -Location $Region `
   -BackendAddressPools $ApplicationGatewayBackendPool `
   -BackendHttpSettingsCollection $ApplicationGatewayBackendPoolSetting `
   -FrontendIpConfigurations $ApplicationGatewayFrontendIPConfig `

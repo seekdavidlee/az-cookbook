@@ -16,7 +16,7 @@ Add-AzStorageAccountNetworkRule -ResourceGroupName $ResourceGroupName -AccountNa
 $status = Set-AzStorageBlobContent -Container "deploy" `
     -File "$RootDirectory/vm/init/ConfigureServer.ps1" -Blob "ConfigureServer.ps1" `
     -Context $ctx `
-    --ErrorAction SilentlyContinue `
+    -ErrorAction SilentlyContinue `
     -Force
 
 $status

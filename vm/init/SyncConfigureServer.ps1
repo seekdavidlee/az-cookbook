@@ -13,7 +13,7 @@ $ip = (Invoke-RestMethod -Uri 'https://api.ipify.org?format=json').ip
 
 Add-AzStorageAccountNetworkRule -ResourceGroupName $ResourceGroupName `
     -AccountName $StorageAccountName `
-    -ErrorAction SilentlyContinue `
+    -ErrorAction Stop `
     -IPAddressOrRange $ip
 
 Write-Host "Root Directory: $RootDirectory"

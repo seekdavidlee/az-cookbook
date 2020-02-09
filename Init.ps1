@@ -247,10 +247,17 @@ $Packages | ForEach-Object {
 
 $WorkspaceName = "${ResourceGroupName}ws"
 
-# Create the workspace
-New-AzOperationalInsightsWorkspace -Location $Region `
-    -Name $WorkspaceName `
-    -Sku Standard `
+if (!(Get-AzOperationalInsightsWorkspace -Name $WorkspaceName `
     -ResourceGroupName $ResourceGroupName `
-    -Force
+    -ErrorAction SilentlyContinue)) {
+    # Create the workspace
+    New-AzOperationalInsightsWorkspace -Location $Region `
+        -Name $WorkspaceName `
+        -Sku Standard `
+        -ResourceGroupName $ResourceGroupName `
+        -Force
+} else {
+    Write-Host "Workspace $WorkspaceName already exist."
+}
+
 

@@ -23,8 +23,10 @@ try {
 }
 catch {
     $_
+    Write-Host "Erro"
     return
 }
+Write-Host "Finish"
 return
 
 

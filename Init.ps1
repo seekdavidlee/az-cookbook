@@ -65,8 +65,10 @@ function EnableSubnetAccessToStorage($ResourceGroupName, $Region, $AccountName) 
 }
 
 $UserPrincipalName = (az ad signed-in-user show --query userPrincipalName).Replace('"','')
-if (! (Get-AzResourceGroup -Name $ResourceGroupName -ErrorAction SilentlyContinue)) {
-    New-AzResourceGroup -Name $ResourceGroupName -Location $region 
+
+$tag = @{ "purpose"="system-operations" }
+if (!(Get-AzResourceGroup -Tag $tag)) {
+    New-AzResourceGroup -Name $ResourceGroupName -Location $region -Tag $tag
 }
 
 $VaultName  = "${ResourceGroupName}kv"

@@ -26,6 +26,7 @@ if ($Error.Count -gt $lastErrorCount) {
     $lastErrorMessage = $Error[0].ToString()
     if (!$lastErrorMessage.Contains("Values for request parameters are invalid")) {
         throw $lastErrorMessage
+        return
     }
 }
 

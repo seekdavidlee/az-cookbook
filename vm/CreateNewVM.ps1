@@ -69,7 +69,7 @@ $VMLocalAdminSecurePassword = ConvertTo-SecureString $password -AsPlainText -For
 
 $VMName = $ComputerName
 $Tags = @{"stack-name"="${StackName}-${prefix}"}
-$VnetName = "$Region-${ResourceGroupName}vn"
+$VnetName = "$Region-${OpsResourceGroupName}vn"
 
 if ($Backend) {
     $SubnetName = "$Region-backend-subnet"

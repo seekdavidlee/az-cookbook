@@ -245,3 +245,12 @@ $Packages | ForEach-Object {
     }
 }
 
+$WorkspaceName = "${ResourceGroupName}ws"
+
+# Create the workspace
+New-AzOperationalInsightsWorkspace -Location $Region `
+    -Name $WorkspaceName `
+    -Sku Standard `
+    -ResourceGroupName $ResourceGroupName `
+    -Force
+

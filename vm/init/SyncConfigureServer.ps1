@@ -23,15 +23,21 @@ Set-AzStorageBlobContent -Container "deploy" `
     -ErrorAction SilentlyContinue `
     -Force
 
-    if ($Error.Count -gt $lastErrorCount -and $Error[$Error.Count - 1].ToString().Contains("HTTP Status Code: 403")) {
-        $lastErrorCount = $Error.Count
-        Write-Host "Retry $i"
-        # Increment wait by additional seconds
-        $wait = $i + 3
-        Write-Host "Waiting $wait seconds"
-        Start-Sleep -Seconds $wait
+    if ($Error.Count -gt $lastErrorCount) {
+
+        $lastErrorMessage = $Error[$Error.Count - 1].ToString()
+        if ($lastErrorMessage.Contains("HTTP Status Code: 403")) {
+            $lastErrorCount = $Error.Count
+            Write-Host "Retry $i"
+            # Increment wait by additional seconds
+            $wait = $i + 3
+            Write-Host "Waiting $wait seconds"
+            Start-Sleep -Seconds $wait
+        } else {
+            throw $lastErrorMessage
+        }
     } else {
-        Write-Host "Done!"
+        Write-Host "Successfully uploaded ConfigureServer.ps1"
         break
     }
 }

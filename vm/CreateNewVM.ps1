@@ -164,7 +164,7 @@ if ($KeyVaultName) {
     Set-AzKeyVaultSecret -VaultName $KeyVaultName -Name $VMName -SecretValue $VMLocalAdminSecurePassword | Out-Null
 
     Write-Host "Enabling disk encryption..."
-    $keyVault = Get-AzKeyVault -VaultName $KeyVaultName -ResourceGroupName $ResourceGroupName
+    $keyVault = Get-AzKeyVault -VaultName $KeyVaultName -ResourceGroupName $OpsResourceGroupName
 
     Set-AzVMDiskEncryptionExtension -ResourceGroupName $ResourceGroupName -VMName $VMName `
         -DiskEncryptionKeyVaultUrl $keyVault.VaultUri -DiskEncryptionKeyVaultId $keyVault.ResourceId -Force
